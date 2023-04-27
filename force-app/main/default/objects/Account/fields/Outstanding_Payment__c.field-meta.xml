@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Outstanding_Payment__c</fullName>
+    <externalId>false</externalId>
+    <label>Outstanding Payment</label>
+    <summarizedField>Invoice__c.Outstanding_Amount_Due__c</summarizedField>
+    <summaryForeignKey>Invoice__c.Account__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <type>Summary</type>
+</CustomField>
