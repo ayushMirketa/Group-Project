@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Ten_days_before_due_date</name>
+        <label>Ten days before due date</label>
+        <locationX>242</locationX>
+        <locationY>408</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>Bodyofprior10daymail</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>$Record.Account__r.Primary_Contact__r.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>Reminder for outstanding payment</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <apiVersion>57.0</apiVersion>
+    <decisions>
+        <name>Copy_1_of_Remaining_After_days_on_due_date</name>
+        <label>Copy 1 of Remaining/After days on due date</label>
+        <locationX>374</locationX>
+        <locationY>288</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Copy_1_of_10_Days_Prior_To_Due_Date</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Not Paid</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Ten_days_before_due_date</targetReference>
+            </connector>
+            <label>Copy 1 of 10 Days Prior To Due Date</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Mail to Primary Contact due to remaining Payment {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Mail to Primary Contact due to remaining Payment</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <object>Invoice__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Schedule_mail_date</name>
+            <connector>
+                <targetReference>Copy_1_of_Remaining_After_days_on_due_date</targetReference>
+            </connector>
+            <label>Schedule mail date</label>
+            <offsetNumber>-10</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Due_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>After_10_days_of_due_date</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;This is a Customer- {!$Record.Account__r.Name} whose opportunity is : {!$Record.Opportunity__r.Name} and the due date for the Outstanding Payment is : {!$Record.Due_Date__c}, but even after the 10 days of due date the payment is yet not made.&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Bodyofprior10daymail</name>
+        <isViewedAsPlainText>false</isViewedAsPlainText>
+        <text>&lt;p&gt;This is the reminder for the Outstanding Payment of the customer- {!$Record.Account__r.Name} who has close opportunity - {!$Record.Opportunity__r.Name} . &lt;/p&gt;&lt;p&gt;The Outstanding Amount of this customer is : {!$Record.Opportunity__r.Amount} and Due date is: {!$Record.Due_Date__c}&lt;/p&gt;</text>
+    </textTemplates>
+</Flow>
