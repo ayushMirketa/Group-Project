@@ -4,7 +4,7 @@ public class InvoiceGenartionHandler {
         Set<Id> AccountIdsSet = new Set<Id>();
         for (Custom_Invoice__c customInvoice : newRecordList) {
             OpportunityIdsSet.add(customInvoice.Opportunity__c);
-            AccountIdsSet.add(customInvoice.Account__c);
+            AccountIdsSet.add(customInvoice.Account_Name__c);
         }
         List<Account> accountList = [SELECT Id, Primary_Contact__c FROM Account WHERE Id IN :AccountIdsSet AND Primary_Contact__c != null];
         Map<Id, Account> contactMap = new Map<Id, Account>([SELECT Id, Primary_Contact__r.Email FROM Account WHERE Id IN :AccountIdsSet]);
@@ -12,7 +12,7 @@ public class InvoiceGenartionHandler {
         // Map<Id,Contact> contactMap=new Map<Id,Contact>([Select Id,Email from Contact where Id IN: ContactIdsSet]);
         List<Messaging.SingleEmailMessage> emailList = new List<Messaging.SingleEmailMessage>();
         for(Custom_Invoice__c customInvoice: newRecordList){
-            Account con = contactMap.get(customInvoice.Account__c);
+            Account con = contactMap.get(customInvoice.Account_Name__c);
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
             mail.setSubject('Invoice Generated ');
             List<String> toAddress = new List<String>();
